@@ -29,6 +29,9 @@ Provide your response in list of str format:
 
 
 def generate_sub_queries(original_query: str) -> Tuple[List[str], int]:
+    '''
+    如果问题能拆分，则将问题通过大模型拆分为4个问题，并返回对应的python数据类型
+    '''
     llm = configuration.llm
     chat_response = llm.chat(
         messages=[

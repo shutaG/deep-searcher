@@ -16,13 +16,16 @@ import asyncio
 
 # Add a wrapper function to support synchronous calls
 def query(
-    original_query: str, max_iter: int = 3
+        original_query: str, max_iter: int = 3
 ) -> Tuple[str, List[RetrievalResult], int]:
     return asyncio.run(async_query(original_query, max_iter))
 
+
 async def async_query(
-    original_query: str, max_iter: int = 3
+        original_query: str, max_iter: int = 3
 ) -> Tuple[str, List[RetrievalResult], int]:
+
+    # 获取问题的拆分结果、相关的子问题
     retrieval_res, all_sub_queries, retrieve_conseumed_token = await async_retrieve(
         original_query, max_iter
     )
@@ -37,20 +40,29 @@ async def async_query(
 
 
 def retrieve(
-    original_query: str, max_iter: int = 3
+        original_query: str, max_iter: int = 3
 ) -> Tuple[List[RetrievalResult], List[str], int]:
     return asyncio.run(async_retrieve(original_query, max_iter))
 
 
 async def async_retrieve(
-    original_query: str, max_iter: int = 3
+        original_query: str, max_iter: int = 3
 ) -> Tuple[List[RetrievalResult], List[str], int]:
+    '''
+    对问题进行拆分、同时从向量库查找相关内容
+    步骤：
+    1. 拆分问题：如果原始的问题可以拆分，则使用大模型拆分为4个问题
+    2. 从向量库搜索出问题相关的内容
+    3. 让大模型根据问题和向量库内容给出更多的问题，当没有更多问题时，返回
+    '''
+
     log.color_print(f"<query> {original_query} </query>\n")
     all_search_res = []
     all_sub_queries = []
     total_tokens = 0
 
     ### SUB QUERIES ###
+    # sub_queries：被拆分的问题的list
     sub_queries, used_token = generate_sub_queries(original_query)
     total_tokens += used_token
     if not sub_queries:
@@ -63,12 +75,14 @@ async def async_retrieve(
     all_sub_queries.extend(sub_queries)
     sub_gap_queries = sub_queries
 
+    # 每轮循环中，从向量库中拿出数据、同时让大模型给出更多的问题
     for iter in range(max_iter):
         log.color_print(f">> Iteration: {iter + 1}\n")
         search_res_from_vectordb = []
         search_res_from_internet = []  # TODO
 
         # Create all search tasks
+        # 从向量库中获取与问题相关的内容
         search_tasks = [
             search_chunks_from_vectordb(query, sub_gap_queries)
             for query in sub_gap_queries
@@ -81,11 +95,13 @@ async def async_retrieve(
             total_tokens += consumed_token
             search_res_from_vectordb.extend(search_res)
 
+        # 移除重复的查询结果
         search_res_from_vectordb = deduplicate_results(search_res_from_vectordb)
         # search_res_from_internet = deduplicate_results(search_res_from_internet)
         all_search_res.extend(search_res_from_vectordb + search_res_from_internet)
 
         ### REFLECTION & GET GAP QUERIES ###
+        # 根据原始问题、子问题、向量库搜索结果，判断是否需要生成更多的问题
         log.color_print("<think> Reflecting on the search results... </think>\n")
         sub_gap_queries, consumed_token = generate_gap_queries(
             original_query, all_sub_queries, all_search_res
@@ -107,7 +123,7 @@ async def async_retrieve(
 
 
 def naive_retrieve(
-    query: str, collection: str = None, top_k=10
+        query: str, collection: str = None, top_k=10
 ) -> List[RetrievalResult]:
     vector_db = configuration.vector_db
     embedding_model = configuration.embedding_model
@@ -135,7 +151,7 @@ def naive_retrieve(
 
 
 def naive_rag_query(
-    query: str, collection: str = None, top_k=10
+        query: str, collection: str = None, top_k=10
 ) -> Tuple[str, List[RetrievalResult]]:
     llm = configuration.llm
     retrieval_res = naive_retrieve(query, collection, top_k)

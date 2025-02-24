@@ -39,8 +39,10 @@ class BaseLLM(ABC):
                     response_content = response_content[4:-3]
                 else:
                     raise ValueError("Invalid code block format")
+            # 将字符串转为python的数据类型值
             result = ast.literal_eval(response_content.strip())
         except:
+            # 匹配列表或者字典并转为python的数据类型
             matches = re.findall(r'(\[.*?\]|\{.*?\})', response_content, re.DOTALL)
 
             if len(matches) != 1:
