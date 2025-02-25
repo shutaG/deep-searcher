@@ -10,12 +10,12 @@ from deepsearcher import configuration
 
 
 def load_from_local_files(
-    paths_or_directory: Union[str, List[str]],
-    collection_name: str = None,
-    collection_description: str = None,
-    force_new_collection: bool = False,
-    chunk_size=1500,
-    chunk_overlap=100,
+        paths_or_directory: Union[str, List[str]],
+        collection_name: str = None,
+        collection_description: str = None,
+        force_new_collection: bool = False,
+        chunk_size=1500,
+        chunk_overlap=100,
 ):
     # 初始化向量数据库
     vector_db = configuration.vector_db
@@ -55,12 +55,15 @@ def load_from_local_files(
 
 
 def load_from_website(
-    urls: Union[str, List[str]],
-    collection_name: str = None,
-    collection_description: str = None,
-    force_new_collection: bool = False,
-    **crawl_kwargs,
+        urls: Union[str, List[str]],
+        collection_name: str = None,
+        collection_description: str = None,
+        force_new_collection: bool = False,
+        **crawl_kwargs,
 ):
+    '''
+    逐个从网址读取内容，并加载到向量库
+    '''
     if isinstance(urls, str):
         urls = [urls]
     vector_db = configuration.vector_db
@@ -78,7 +81,7 @@ def load_from_website(
     for url in tqdm(urls, desc="Loading from websites"):
         docs = web_crawler.crawl_url(url, **crawl_kwargs)
         all_docs.extend(docs)
-
+    # 切分网页内容
     chunks = split_docs_to_chunks(all_docs)
     chunks = embedding_model.embed_chunks(chunks)
     vector_db.insert_data(collection=collection_name, chunks=chunks)
