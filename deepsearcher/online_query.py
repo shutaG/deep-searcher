@@ -24,13 +24,13 @@ def query(
 async def async_query(
         original_query: str, max_iter: int = 3
 ) -> Tuple[str, List[RetrievalResult], int]:
-
     # 获取问题的拆分结果、相关的子问题
     retrieval_res, all_sub_queries, retrieve_conseumed_token = await async_retrieve(
         original_query, max_iter
     )
     ### GENERATE FINAL ANSWER ###
     log.color_print("<think> Generating final answer... </think>\n")
+    # 将所有的子问题、检索到的内容进行综合让大模型给出最终的答案
     final_answer, final_consumed_token = generate_final_answer(
         original_query, all_sub_queries, retrieval_res
     )
@@ -119,6 +119,7 @@ async def async_retrieve(
             all_sub_queries.extend(sub_gap_queries)
 
     all_search_res = deduplicate_results(all_search_res)
+    # 向量库中的结果、子问题、总token消耗
     return all_search_res, all_sub_queries, total_tokens
 
 
