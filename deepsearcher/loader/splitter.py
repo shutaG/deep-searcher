@@ -22,6 +22,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 def _sentence_window_split(
     split_docs: List[Document], original_document: Document, offset: int = 200
 ) -> List[Chunk]:
+    '''
+    增加metadata["wider_text"]的范围
+    '''
     chunks = []
     original_text = original_document.page_content
     for doc in split_docs:
@@ -40,10 +43,12 @@ def _sentence_window_split(
 
 
 def split_docs_to_chunks(documents: List[Document], chunk_size: int = 1500, chunk_overlap=100) -> List[Chunk]:
+    # 初始化文本分割器，默认分割长度为1500，重叠长度为100
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
     all_chunks = []
     for doc in documents:
         split_docs = text_splitter.split_documents([doc])
+        # 扩展切割后文档的上下文信息
         split_chunks = _sentence_window_split(split_docs, doc, offset=300)
         all_chunks.extend(split_chunks)
     return all_chunks

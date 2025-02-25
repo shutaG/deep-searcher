@@ -17,6 +17,7 @@ def load_from_local_files(
     chunk_size=1500,
     chunk_overlap=100,
 ):
+    # 初始化向量数据库
     vector_db = configuration.vector_db
     if collection_name is None:
         collection_name = vector_db.default_collection
@@ -29,6 +30,8 @@ def load_from_local_files(
         description=collection_description,
         force_new_collection=force_new_collection,
     )
+
+    # 获取文件路径或者文件夹下所有支持的文件类型的路径
     if isinstance(paths_or_directory, str):
         paths_or_directory = [paths_or_directory]
     all_docs = []
@@ -39,13 +42,15 @@ def load_from_local_files(
             docs = file_loader.load_file(path)
         all_docs.extend(docs)
     # print("Splitting docs to chunks...")
+    # 将文件切分为chunk列表
     chunks = split_docs_to_chunks(
         all_docs,
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap,
     )
-
+    # 进行embedding
     chunks = embedding_model.embed_chunks(chunks)
+    # 插入向量数据库
     vector_db.insert_data(collection=collection_name, chunks=chunks)
 
 

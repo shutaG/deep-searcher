@@ -13,6 +13,9 @@ class BaseEmbedding:
         return [self.embed_query(text) for text in texts]
 
     def embed_chunks(self, chunks: List[Chunk], batch_size=256) -> List[Chunk]:
+        '''
+        将chunks转为256个一组的列表，然后逐个embedding
+        '''
         texts = [chunk.text for chunk in chunks]
         batch_texts = [texts[i:i + batch_size] for i in range(0, len(texts), batch_size)]
         embeddings = []
