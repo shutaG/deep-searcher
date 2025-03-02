@@ -21,7 +21,7 @@ provide_settings:
 #    provider: "PPIO"
 #    config:
 #      model: "deepseek/deepseek-v3/community"
-##      api_key: "sk_xxxxxx"  # Uncomment to override the `PPIO_API_KEY` set in the environment variable
+##      api_key: "xxxx"  # Uncomment to override the `PPIO_API_KEY` set in the environment variable
 ##      base_url: ""
 
 #    provider: "TogetherAI"
@@ -46,8 +46,6 @@ provide_settings:
     config:
       model: "text-embedding-ada-002"
 #      api_key: ""  # Uncomment to override the `OPENAI_API_KEY` set in the environment variable
-#      base_url: "" # Uncomment to override the `OPENAI_BASE_URL` set in the environment variable
-#      dimension: 1536 # Uncomment to customize the embedding dimension 
 
 
 #    provider: "MilvusEmbedding"
@@ -71,12 +69,12 @@ provide_settings:
 # .    api_key: ""   # Uncomment to override the `SILICONFLOW_API_KEY` set in the environment variable   
 
   file_loader:
-    provider: "PDFLoader"
-    config: {}
+#    provider: "PDFLoader"
+#    config: {}
 
-#    provider: "JsonFileLoader"
-#    config:
-#      text_key: ""
+    provider: "JsonFileLoader"
+    config:
+      text_key: "text"
 
 #    provider: "TextLoader"
 #    config: {}

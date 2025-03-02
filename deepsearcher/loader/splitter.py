@@ -2,21 +2,23 @@
 #  https://github.com/milvus-io/bootcamp/blob/master/bootcamp/RAG/advanced_rag/sentence_window_with_langchain.ipynb
 
 from typing import List
-from langchain_core.documents import Document
 
+from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
 class Chunk:
-    def __init__(self, text: str, reference: str, metadata: dict = None, embedding: List[float] = None):
+    def __init__(
+        self,
+        text: str,
+        reference: str,
+        metadata: dict = None,
+        embedding: List[float] = None,
+    ):
         self.text = text
         self.reference = reference
         self.metadata = metadata or {}
         self.embedding = embedding or None
-
-
-from typing import List
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-
 
 
 def _sentence_window_split(
@@ -41,10 +43,13 @@ def _sentence_window_split(
     return chunks
 
 
-
-def split_docs_to_chunks(documents: List[Document], chunk_size: int = 1500, chunk_overlap=100) -> List[Chunk]:
+def split_docs_to_chunks(
+    documents: List[Document], chunk_size: int = 1500, chunk_overlap=100
+) -> List[Chunk]:
     # 初始化文本分割器，默认分割长度为1500，重叠长度为100
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size, chunk_overlap=chunk_overlap
+    )
     all_chunks = []
     for doc in documents:
         split_docs = text_splitter.split_documents([doc])

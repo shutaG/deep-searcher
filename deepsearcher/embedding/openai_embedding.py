@@ -1,8 +1,9 @@
 import os
 from typing import List
-from openai._types import NOT_GIVEN
-from deepsearcher.embedding.base import BaseEmbedding
 
+from openai._types import NOT_GIVEN
+
+from deepsearcher.embedding.base import BaseEmbedding
 
 OPENAI_MODEL_DIM_MAP = {
     "text-embedding-ada-002": 1536,
@@ -32,32 +33,40 @@ class OpenAIEmbedding(BaseEmbedding):
             api_key = kwargs.pop("api_key")
         else:
             api_key = os.getenv("OPENAI_API_KEY")
-        if "model_name" in kwargs and (
-            not model or model == "text-embedding-ada-002"
-        ):
+        if "base_url" in kwargs:
+            base_url = kwargs.pop("base_url")
+        else:
+            base_url = os.getenv("OPENAI_BASE_URL")
+        if "model_name" in kwargs and (not model or model == "text-embedding-ada-002"):
             model = kwargs.pop("model_name")
+        if "dimension" in kwargs:
+            dimension = kwargs.pop("dimension")
+        else:
+            dimension = OPENAI_MODEL_DIM_MAP[model]
+        self.dim = dimension
         self.model = model
-        self.client = OpenAI(api_key=api_key, **kwargs)
+        self.client = OpenAI(api_key=api_key, base_url=base_url, **kwargs)
 
-    def embed_query(self, text: str, dimensions=NOT_GIVEN) -> List[float]:
+    def _get_dim(self):
+        return self.dim if self.model != "text-embedding-ada-002" else NOT_GIVEN
+
+    def embed_query(self, text: str) -> List[float]:
         # text = text.replace("\n", " ")
         return (
             self.client.embeddings.create(
-                input=[text], model=self.model, dimensions=dimensions
+                input=[text], model=self.model, dimensions=self._get_dim()
             )
             .data[0]
             .embedding
         )
 
-    def embed_documents(
-        self, texts: List[str], dimensions=NOT_GIVEN
-    ) -> List[List[float]]:
+    def embed_documents(self, texts: List[str]) -> List[List[float]]:
         res = self.client.embeddings.create(
-            input=texts, model=self.model, dimensions=dimensions
+            input=texts, model=self.model, dimensions=self._get_dim()
         )
         res = [r.embedding for r in res.data]
         return res
 
     @property
     def dimension(self) -> int:
-        return OPENAI_MODEL_DIM_MAP[self.model]
+        return self.dim

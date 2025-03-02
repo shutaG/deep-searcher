@@ -4,23 +4,23 @@ from typing import Dict, List
 from deepsearcher.llm.base import BaseLLM, ChatResponse
 
 
-class DeepSeek(BaseLLM):
+class PPIO(BaseLLM):
     """
-    https://api-docs.deepseek.com/
+    PPIO API
     """
 
-    def __init__(self, model: str = "deepseek-chat", **kwargs):
+    def __init__(self, model: str = "deepseek/deepseek-v3/community", **kwargs):
         from openai import OpenAI as OpenAI_
 
         self.model = model
         if "api_key" in kwargs:
             api_key = kwargs.pop("api_key")
         else:
-            api_key = os.getenv("DEEPSEEK_API_KEY")
+            api_key = os.getenv("PPIO_API_KEY")
         if "base_url" in kwargs:
             base_url = kwargs.pop("base_url")
         else:
-            base_url = os.getenv("DEEPSEEK_BASE_URL", default="https://api.deepseek.com")
+            base_url = "https://api.ppinfra.com/v3/openai"
         self.client = OpenAI_(api_key=api_key, base_url=base_url, **kwargs)
 
     def chat(self, messages: List[Dict]) -> ChatResponse:

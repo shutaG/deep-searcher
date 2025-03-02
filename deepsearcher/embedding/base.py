@@ -8,7 +8,7 @@ from deepsearcher.loader.splitter import Chunk
 class BaseEmbedding:
     def embed_query(self, text: str) -> List[float]:
         pass
-    
+
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
         return [self.embed_query(text) for text in texts]
 
@@ -17,7 +17,7 @@ class BaseEmbedding:
         将chunks转为256个一组的列表，然后逐个embedding
         '''
         texts = [chunk.text for chunk in chunks]
-        batch_texts = [texts[i:i + batch_size] for i in range(0, len(texts), batch_size)]
+        batch_texts = [texts[i : i + batch_size] for i in range(0, len(texts), batch_size)]
         embeddings = []
         for batch_text in tqdm(batch_texts, desc="Embedding chunks"):
             batch_embeddings = self.embed_documents(batch_text)

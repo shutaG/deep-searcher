@@ -1,6 +1,6 @@
 # DeepSearcher
 
-DeepSearcher combines reasoning LLMs (OpenAI o1, o3-mini, DeepSeek, Grok 3 etc.) and Vector Databases (Milvus, Zilliz Cloud etc.) to perform search, evaluation, and reasoning based on private data, providing highly accurate answer and comprehensive report. This project is suitable for enterprise knowledge management, intelligent Q&A systems, and information retrieval scenarios.
+DeepSearcher combines reasoning LLMs (OpenAI o1, o3-mini, DeepSeek, Grok 3, Claude 3.7 Sonnet, etc.) and Vector Databases (Milvus, Zilliz Cloud etc.) to perform search, evaluation, and reasoning based on private data, providing highly accurate answer and comprehensive report. This project is suitable for enterprise knowledge management, intelligent Q&A systems, and information retrieval scenarios.
 
 ![Architecture](./assets/pic/deep-searcher-arch.png)
 
@@ -47,6 +47,7 @@ config = Configuration()
 # Customize your config here,
 # more configuration see the Configuration Details section below.
 config.set_provider_config("llm", "OpenAI", {"model": "gpt-4o-mini"})
+config.set_provider_config("embedding", "OpenAIEmbedding", {"model", "text-embedding-ada-002"})
 init_config(config = config)
 
 # Load your local data
@@ -64,7 +65,7 @@ result = query("Write a report about xxx.") # Your question here
 #### LLM Configuration
 
 <pre><code>config.set_provider_config("llm", "(LLMName)", "(Arguments dict)")</code></pre>
-<p>The "LLMName" can be one of the following: ["DeepSeek", "OpenAI", "Grok", "SiliconFlow", "TogetherAI", "Gemini"]</p>
+<p>The "LLMName" can be one of the following: ["DeepSeek", "OpenAI", "XAI", "SiliconFlow", "PPIO", "TogetherAI", "Gemini", "Ollama"]</p>
 <p> The "Arguments dict" is a dictionary that contains the necessary arguments for the LLM class.</p>
 
 <details>
@@ -96,10 +97,17 @@ result = query("Write a report about xxx.") # Your question here
 </details>
 
 <details>
-  <summary>Example (Grok)</summary>
+  <summary>Example (XAI Grok)</summary>
     <p> Make sure you have prepared your XAI API KEY as an env variable <code>XAI_API_KEY</code>.</p>
-    <pre><code>config.set_provider_config("llm", "Grok", {"model": "grok-2-latest"})</code></pre>
-    <p> More details about Grok: https://docs.x.ai/docs/overview#featured-models </p>
+    <pre><code>config.set_provider_config("llm", "XAI", {"model": "grok-2-latest"})</code></pre>
+    <p> More details about XAI Grok: https://docs.x.ai/docs/overview#featured-models </p>
+</details>
+
+<details>
+  <summary>Example (Claude)</summary>
+    <p> Make sure you have prepared your ANTHROPIC API KEY as an env variable <code>ANTHROPIC_API_KEY</code>.</p>
+    <pre><code>config.set_provider_config("llm", "Anthropic", {"model": "claude-3-5-sonnet-latest"})</code></pre>
+    <p> More details about Anthropic Claude: https://docs.anthropic.com/en/home </p>
 </details>
 
 <details>
@@ -109,27 +117,45 @@ result = query("Write a report about xxx.") # Your question here
     <p> You need to install gemini before running, execute: <code>pip install google-genai</code>. More details about Gemini: https://ai.google.dev/gemini-api/docs </p>
 </details>
 
+<details>
+  <summary>Example (DeepSeek from PPIO)</summary>
+    <p> Make sure you have prepared your PPIO API KEY as an env variable <code>PPIO_API_KEY</code>. You can create an API Key <a href="https://ppinfra.com/settings/key-management?utm_source=github_deep-searcher">here</a>. </p>
+    <pre><code>config.set_provider_config("llm", "PPIO", {"model": "deepseek/deepseek-v3/community"})</code></pre>
+    <p> More details about PPIO: https://ppinfra.com/docs/get-started/quickstart.html?utm_source=github_deep-searcher </p>
+</details>
+
+<details>
+  <summary>Example (Ollama)</summary>
+  <p> Follow <a href="https://github.com/jmorganca/ollama">these instructions</a> to set up and run a local Ollama instance:</p>
+  <p> <a href="https://ollama.ai/download">Download</a> and install Ollama onto the available supported platforms (including Windows Subsystem for Linux).</p>
+  <p> View a list of available models via the <a href="https://ollama.ai/library">model library</a>.</p>
+  <p> Fetch available LLM models via <code>ollama pull &lt;name-of-model&gt;</code></p>
+  <p> Example: <code>ollama pull qwen2.5:3b</code></p>
+  <p> To chat directly with a model from the command line, use <code>ollama run &lt;name-of-model&gt;</code>.</p>
+  <p> By default, Ollama has a REST API for running and managing models on <a href="http://localhost:11434">http://localhost:11434</a>.</p>
+</details>
+
 #### Embedding Model Configuration
 <pre><code>config.set_provider_config("embedding", "(EmbeddingModelName)", "(Arguments dict)")</code></pre>
 <p>The "EmbeddingModelName" can be one of the following: ["MilvusEmbedding", "OpenAIEmbedding", "VoyageEmbedding", "SiliconflowEmbedding"]</p>
 <p> The "Arguments dict" is a dictionary that contains the necessary arguments for the embedding model class.</p>
 
 <details>
-  <summary>Example (Pymilvus built-in embedding model)</summary>
-    <p> Use the built-in embedding model in Pymilvus, you can set the model name as <code>"BAAI/bge-base-en-v1.5"</code>, <code>"BAAI/bge-large-en-v1.5"</code>, <code>"jina-embeddings-v3"</code>, etc. <br/>
-    See [milvus_embedding.py](deepsearcher/embedding/milvus_embedding.py) for more details.  </p>
-    <pre><code>config.set_provider_config("embedding", "MilvusEmbedding", {"model": "BAAI/bge-base-en-v1.5"})</code></pre>
-    <pre><code>config.set_provider_config("embedding", "MilvusEmbedding", {"model": "jina-embeddings-v3"})</code></pre>
-    <p> For Jina's embedding model, you need<code>JINAAI_API_KEY</code>.</p>
-    <p> More details about Pymilvus: https://milvus.io/docs/embeddings.md </p>
-
-</details>
-
-<details>
   <summary>Example (OpenAI embedding)</summary>
     <p> Make sure you have prepared your OpenAI API KEY as an env variable <code>OPENAI_API_KEY</code>.</p>
     <pre><code>config.set_provider_config("embedding", "OpenAIEmbedding", {"model": "text-embedding-3-small"})</code></pre>
     <p> More details about OpenAI models: https://platform.openai.com/docs/guides/embeddings/use-cases </p>
+</details>
+
+<details>
+  <summary>Example (Pymilvus built-in embedding model)</summary>
+    <p> Use the built-in embedding model in Pymilvus, you can set the model name as <code>"default"</code>, <code>"BAAI/bge-base-en-v1.5"</code>, <code>"BAAI/bge-large-en-v1.5"</code>, <code>"jina-embeddings-v3"</code>, etc. <br/>
+    See [milvus_embedding.py](deepsearcher/embedding/milvus_embedding.py) for more details.  </p>
+    <pre><code>config.set_provider_config("embedding", "MilvusEmbedding", {"model": "BAAI/bge-base-en-v1.5"})</code></pre>
+    <pre><code>config.set_provider_config("embedding", "MilvusEmbedding", {"model": "jina-embeddings-v3"})</code></pre>
+    <p> For Jina's embedding model, you need<code>JINAAI_API_KEY</code>.</p>
+    <p> You need to install pymilvus model before running, execute: <code>pip install pymilvus.model</code>. More details about Pymilvus: https://milvus.io/docs/embeddings.md </p>
+
 </details>
 
 <details>
@@ -318,11 +344,14 @@ nest_asyncio.apply()
 ### 🔹 LLM Support
 - [OpenAI](https://platform.openai.com/docs/models) (`OPENAI_API_KEY` env variable required)
 - [DeepSeek](https://api-docs.deepseek.com/) (`DEEPSEEK_API_KEY` env variable required)
-- [Grok 3](https://x.ai/blog/grok-3) (Coming soon!) (`XAI_API_KEY` env variable required)
+- [XAI Grok](https://x.ai/blog/grok-3) (`XAI_API_KEY` env variable required)
+- [Anthropic Claude](https://docs.anthropic.com/en/home) (`ANTHROPIC_API_KEY` env variable required)
 - [SiliconFlow Inference Service](https://docs.siliconflow.cn/en/userguide/introduction) (`SILICONFLOW_API_KEY` env variable required)
+- [PPIO](https://ppinfra.com/model-api/product/llm-api?utm_source=github_deep-searcher) (`PPIO_API_KEY` env variable required)
 - [TogetherAI Inference Service](https://docs.together.ai/docs/introduction) (`TOGETHER_API_KEY` env variable required)
 - [Google Gemini](https://ai.google.dev/gemini-api/docs) (`GEMINI_API_KEY` env variable required)
 - [SambaNova Cloud Inference Service](https://docs.together.ai/docs/introduction) (`SAMBANOVA_API_KEY` env variable required)
+- [Ollama](https://ollama.com/)
 
 ### 🔹 Document Loader
 - Local File
@@ -336,7 +365,10 @@ nest_asyncio.apply()
 - [Milvus](https://milvus.io/) (the same as [Zilliz](https://www.zilliz.com/))
 
 ---
+## 📊 Evaluation 
+See the [Evaluation](./evaluation) directory for more details.
 
+---
 ## 📌 Future Plans
 - Enhance web crawling functionality
 - Support more vector databases (e.g., FAISS...)
