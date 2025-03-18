@@ -1,6 +1,11 @@
 # DeepSearcher
 
-DeepSearcher combines reasoning LLMs (OpenAI o1, o3-mini, DeepSeek, Grok 3, Claude 3.7 Sonnet, etc.) and Vector Databases (Milvus, Zilliz Cloud etc.) to perform search, evaluation, and reasoning based on private data, providing highly accurate answer and comprehensive report. This project is suitable for enterprise knowledge management, intelligent Q&A systems, and information retrieval scenarios.
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/zilliz_universe.svg?style=social&label=Follow%20%40Zilliz)](https://twitter.com/zilliz_universe)
+  <a href="https://discord.gg/mKc3R95yE5"><img height="20" src="https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white" alt="discord"/></a>
+
+
+DeepSearcher combines reasoning LLMs (OpenAI o1, o3-mini, DeepSeek, Grok 3, Claude 3.7 Sonnet, QwQ, etc.) and Vector Databases (Milvus, Zilliz Cloud etc.) to perform search, evaluation, and reasoning based on private data, providing highly accurate answer and comprehensive report. This project is suitable for enterprise knowledge management, intelligent Q&A systems, and information retrieval scenarios.
 
 ![Architecture](./assets/pic/deep-searcher-arch.png)
 
@@ -46,8 +51,8 @@ config = Configuration()
 
 # Customize your config here,
 # more configuration see the Configuration Details section below.
-config.set_provider_config("llm", "OpenAI", {"model": "gpt-4o-mini"})
-config.set_provider_config("embedding", "OpenAIEmbedding", {"model", "text-embedding-ada-002"})
+config.set_provider_config("llm", "OpenAI", {"model": "o1-mini"})
+config.set_provider_config("embedding", "OpenAIEmbedding", {"model": "text-embedding-ada-002"})
 init_config(config = config)
 
 # Load your local data
@@ -71,28 +76,28 @@ result = query("Write a report about xxx.") # Your question here
 <details>
   <summary>Example (OpenAI)</summary>
     <p> Make sure you have prepared your OPENAI API KEY as an env variable <code>OPENAI_API_KEY</code>.</p>
-    <pre><code>config.set_provider_config("llm", "OpenAI", {"model": "gpt-4o"})</code></pre>
+    <pre><code>config.set_provider_config("llm", "OpenAI", {"model": "o1-mini"})</code></pre>
     <p> More details about OpenAI models: https://platform.openai.com/docs/models </p>
 </details>
 
 <details>
   <summary>Example (DeepSeek from official)</summary>
     <p> Make sure you have prepared your DEEPSEEK API KEY as an env variable <code>DEEPSEEK_API_KEY</code>.</p>
-    <pre><code>config.set_provider_config("llm", "DeepSeek", {"model": "deepseek-chat"})</code></pre>
+    <pre><code>config.set_provider_config("llm", "DeepSeek", {"model": "deepseek-reasoner"})</code></pre>
     <p> More details about DeepSeek: https://api-docs.deepseek.com/ </p>
 </details>
 
 <details>
   <summary>Example (DeepSeek from SiliconFlow)</summary>
     <p> Make sure you have prepared your SILICONFLOW API KEY as an env variable <code>SILICONFLOW_API_KEY</code>.</p>
-    <pre><code>config.set_provider_config("llm", "SiliconFlow", {"model": "deepseek-ai/DeepSeek-V3"})</code></pre>
+    <pre><code>config.set_provider_config("llm", "SiliconFlow", {"model": "deepseek-ai/DeepSeek-R1"})</code></pre>
     <p> More details about SiliconFlow: https://docs.siliconflow.cn/quickstart </p>
 </details>
 
 <details>
   <summary>Example (DeepSeek from TogetherAI)</summary>
     <p> Make sure you have prepared your TOGETHER API KEY as an env variable <code>TOGETHER_API_KEY</code>.</p>
-    <pre><code>config.set_provider_config("llm", "TogetherAI", {"model": "deepseek-ai/DeepSeek-V3"})</code></pre>
+    <pre><code>config.set_provider_config("llm", "TogetherAI", {"model": "deepseek-ai/DeepSeek-R1"})</code></pre>
     <p> You need to install together before running, execute: <code>pip install together</code>. More details about TogetherAI: https://www.together.ai/ </p>
 </details>
 
@@ -106,7 +111,7 @@ result = query("Write a report about xxx.") # Your question here
 <details>
   <summary>Example (Claude)</summary>
     <p> Make sure you have prepared your ANTHROPIC API KEY as an env variable <code>ANTHROPIC_API_KEY</code>.</p>
-    <pre><code>config.set_provider_config("llm", "Anthropic", {"model": "claude-3-5-sonnet-latest"})</code></pre>
+    <pre><code>config.set_provider_config("llm", "Anthropic", {"model": "claude-3-7-sonnet-latest"})</code></pre>
     <p> More details about Anthropic Claude: https://docs.anthropic.com/en/home </p>
 </details>
 
@@ -120,7 +125,7 @@ result = query("Write a report about xxx.") # Your question here
 <details>
   <summary>Example (DeepSeek from PPIO)</summary>
     <p> Make sure you have prepared your PPIO API KEY as an env variable <code>PPIO_API_KEY</code>. You can create an API Key <a href="https://ppinfra.com/settings/key-management?utm_source=github_deep-searcher">here</a>. </p>
-    <pre><code>config.set_provider_config("llm", "PPIO", {"model": "deepseek/deepseek-v3/community"})</code></pre>
+    <pre><code>config.set_provider_config("llm", "PPIO", {"model": "deepseek/deepseek-r1-turbo"})</code></pre>
     <p> More details about PPIO: https://ppinfra.com/docs/get-started/quickstart.html?utm_source=github_deep-searcher </p>
 </details>
 
@@ -130,9 +135,17 @@ result = query("Write a report about xxx.") # Your question here
   <p> <a href="https://ollama.ai/download">Download</a> and install Ollama onto the available supported platforms (including Windows Subsystem for Linux).</p>
   <p> View a list of available models via the <a href="https://ollama.ai/library">model library</a>.</p>
   <p> Fetch available LLM models via <code>ollama pull &lt;name-of-model&gt;</code></p>
-  <p> Example: <code>ollama pull qwen2.5:3b</code></p>
+  <p> Example: <code>ollama pull qwq</code></p>
   <p> To chat directly with a model from the command line, use <code>ollama run &lt;name-of-model&gt;</code>.</p>
   <p> By default, Ollama has a REST API for running and managing models on <a href="http://localhost:11434">http://localhost:11434</a>.</p>
+  <pre><code>config.set_provider_config("llm", "Ollama", {"model": "qwq"})</code></pre>
+</details>
+
+<details>
+  <summary>Example (Volcengine)</summary>
+    <p> Make sure you have prepared your Volcengine API KEY as an env variable <code>VOLCENGINE_API_KEY</code>. You can create an API Key <a href="https://console.volcengine.com/ark/region:ark+cn-beijing/apiKey">here</a>. </p>
+    <pre><code>config.set_provider_config("llm", "Volcengine", {"model": "deepseek-r1-250120"})</code></pre>
+    <p> More details about Volcengine: https://www.volcengine.com/docs/82379/1099455?utm_source=github_deep-searcher </p>
 </details>
 
 #### Embedding Model Configuration
@@ -176,6 +189,13 @@ result = query("Write a report about xxx.") # Your question here
     <p> Make sure you have prepared your Siliconflow API KEY as an env variable <code>SILICONFLOW_API_KEY</code>.</p>
     <pre><code>config.set_provider_config("embedding", "SiliconflowEmbedding", {"model": "BAAI/bge-m3"})</code></pre>
     <p> More details about Siliconflow: https://docs.siliconflow.cn/en/api-reference/embeddings/create-embeddings </p>
+</details>
+
+<details>
+  <summary>Example (Volcengine embedding)</summary>
+    <p> Make sure you have prepared your Volcengine API KEY as an env variable <code>VOLCENGINE_API_KEY</code>.</p>
+    <pre><code>config.set_provider_config("embedding", "VolcengineEmbedding", {"model": "doubao-embedding-text-240515"})</code></pre>
+    <p> More details about Volcengine: https://www.volcengine.com/docs/82379/1302003 </p>
 </details>
 
 #### Vector Database Configuration
@@ -238,7 +258,7 @@ result = query("Write a report about xxx.") # Your question here
 <details>
   <summary>Example (Crawl4AI)</summary>
     <p> Make sure you have run <code>crawl4ai-setup</code> in your environment.</p>
-    <pre><code>config.set_provider_config("web_crawler", "Crawl4AICrawler", {})</code></pre>
+    <pre><code>config.set_provider_config("web_crawler", "Crawl4AICrawler", {"browser_config": {"headless": True, "verbose": True}})</code></pre>
     <p> You need to install crawl4ai before running, execute: <code>pip install crawl4ai</code>. More details about Crawl4AI: https://docs.crawl4ai.com/ </p>
 </details>
 
@@ -253,31 +273,37 @@ result = query("Write a report about xxx.") # Your question here
 ### Python CLI Mode
 #### Load
 ```shell
-deepsearcher --load "your_local_path_or_url"
+deepsearcher load "your_local_path_or_url"
 # load into a specific collection
-deepsearcher --load "your_local_path_or_url" --collection_name "your_collection_name" --collection_desc "your_collection_description"
+deepsearcher load "your_local_path_or_url" --collection_name "your_collection_name" --collection_desc "your_collection_description"
 ```
 Example loading from local file:
 ```shell
-deepsearcher --load "/path/to/your/local/file.pdf"
+deepsearcher load "/path/to/your/local/file.pdf"
 # or more files at once
-deepsearcher --load "/path/to/your/local/file1.pdf" "/path/to/your/local/file2.md"
+deepsearcher load "/path/to/your/local/file1.pdf" "/path/to/your/local/file2.md"
 ```
 Example loading from url (*Set `FIRECRAWL_API_KEY` in your environment variables, see [FireCrawl](https://docs.firecrawl.dev/introduction) for more details*):
 
 ```shell
-deepsearcher --load "https://www.wikiwand.com/en/articles/DeepSeek"
+deepsearcher load "https://www.wikiwand.com/en/articles/DeepSeek"
 ```
 
 #### Query
 ```shell
-deepsearcher --query "Write a report about xxx."
+deepsearcher query "Write a report about xxx."
 ```
 
 More help information
 ```shell
 deepsearcher --help
 ```
+For more help information about a specific subcommand, you can use `deepsearcher [subcommand] --help`.
+```shell
+deepsearcher load --help
+deepsearcher query --help
+```
+
 ### Deployment
 
 #### Configure modules
@@ -302,11 +328,18 @@ Click on the button "Try it out", it allows you to fill the parameters and direc
 
 ## ❓ Q&A
 
-**Q1**: 
+**Q1**: Why I failed to parse LLM output format / How to select the LLM?
+
+
+**A1**: Small LLMs struggle to follow the prompt to generate a desired response, which usually cause the format parsing problem. A better practice is to use large reasoning models e.g. deepseek-r1 671b, OpenAI o-series, Claude 3.7 sonnet, etc. as your LLM. 
+
+---
+
+**Q2**: 
 OSError: We couldn't connect to 'https://huggingface.co' to load this file, couldn't find it in the cached files and it looks like GPTCache/paraphrase-albert-small-v2 is not the path to a directory containing a file named config.json.
 Checkout your internet connection or see how to run the library in offline mode at 'https://huggingface.co/docs/transformers/installation#offline-mode'.
 
-**A1**: This is mainly due to abnormal access to huggingface, which may be a network or permission problem. You can try the following two methods:
+**A2**: This is mainly due to abnormal access to huggingface, which may be a network or permission problem. You can try the following two methods:
 1. If there is a network problem, set up a proxy, try adding the following environment variable.
 ```bash
 export HF_ENDPOINT=https://hf-mirror.com
@@ -318,9 +351,9 @@ export HUGGING_FACE_HUB_TOKEN=xxxx
 
 ---
 
-**Q2**: DeepSearcher doesn't run in Jupyter notebook.
+**Q3**: DeepSearcher doesn't run in Jupyter notebook.
 
-**A2**: Install `nest_asyncio` and then put this code block in front of your jupyter notebook.
+**A3**: Install `nest_asyncio` and then put this code block in front of your jupyter notebook.
 
 ```
 pip install nest_asyncio

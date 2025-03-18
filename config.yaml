@@ -2,31 +2,31 @@ provide_settings:
   llm:
     provider: "OpenAI"
     config:
-      model: "gpt-4o-mini"  # "gpt-o1-mini"
+      model: "o1-mini"
 #      api_key: "sk-xxxx"  # Uncomment to override the `OPENAI_API_KEY` set in the environment variable
 #      base_url: ""
 
 #    provider: "DeepSeek"
 #    config:
-#      model: "deepseek-chat"  # "deepseek-reasoner"
+#      model: "deepseek-reasoner"
 ##      api_key: "sk-xxxx"  # Uncomment to override the `DEEPSEEK_API_KEY` set in the environment variable
 ##      base_url: ""
 
 #    provider: "SiliconFlow"
 #    config:
-#      model: "deepseek-ai/DeepSeek-V3"
+#      model: "deepseek-ai/DeepSeek-R1"
 ##      api_key: "xxxx"  # Uncomment to override the `SILICONFLOW_API_KEY` set in the environment variable
 ##      base_url: ""
 
 #    provider: "PPIO"
 #    config:
-#      model: "deepseek/deepseek-v3/community"
+#      model: "deepseek/deepseek-r1-turbo"
 ##      api_key: "sk_xxxxxx"  # Uncomment to override the `PPIO_API_KEY` set in the environment variable
 ##      base_url: ""
 
 #    provider: "TogetherAI"
 #    config:
-#      model: "deepseek-ai/DeepSeek-V3"
+#      model: "deepseek-ai/DeepSeek-R1"
 ##      api_key: "xxxx"  # Uncomment to override the `TOGETHER_API_KEY` set in the environment variable
 
 #    provider: "AzureOpenAI"
@@ -38,7 +38,7 @@ provide_settings:
 
 #    provider: "Ollama"
 #    config:
-#      model: "qwen2.5:3b"
+#      model: "qwq"
 ##      base_url: ""
 
   embedding:
@@ -70,6 +70,12 @@ provide_settings:
 #      model: "BAAI/bge-m3"
 # .    api_key: ""   # Uncomment to override the `SILICONFLOW_API_KEY` set in the environment variable   
 
+#    provider: "GeminiEmbedding"
+#    config:
+#      model: "text-embedding-004"
+##       api_key: ""  # Uncomment to override the `GEMINI_API_KEY` set in the environment variable
+##       dimension: 768 # Uncomment to customize the embedding dimension 
+
   file_loader:
     provider: "PDFLoader"
     config: {}
@@ -88,9 +94,16 @@ provide_settings:
     provider: "FireCrawlCrawler"
     config: {}
 
-#    provider: "Crawl4AICrawler"
-#    config: {}
-
+    # provider: "Crawl4AICrawler"
+    # config: # Uncomment to custom browser configuration for Crawl4AI
+    #   browser_config:
+    #     headless: false
+    #     proxy: "http://127.0.0.1:7890"
+    #     chrome_channel: "chrome"
+    #     verbose: true
+    #     viewport_width: 800
+    #     viewport_height: 600
+    
 #    provider: "JinaCrawler"
 #    config: {}
 
@@ -101,6 +114,17 @@ provide_settings:
       uri: "./milvus.db"
       token: "root:Milvus"
       db: "default"
+
+  # vector_db:      
+  #   provider: "OracleDB"
+  #   config:
+  #     default_collection: "deepsearcher"
+  #     user: ""
+  #     password: ""
+  #     dsn: ""
+  #     config_dir: ""
+  #     wallet_location: ""
+  #     wallet_password: ""
 
 query_settings:
   max_iter: 3

@@ -5,53 +5,49 @@ import requests
 
 from deepsearcher.embedding.base import BaseEmbedding
 
-SILICONFLOW_MODEL_DIM_MAP = {
-    "BAAI/bge-m3": 1024,
-    "netease-youdao/bce-embedding-base_v1": 768,
-    "BAAI/bge-large-zh-v1.5": 1024,
-    "BAAI/bge-large-en-v1.5": 1024,
-    "Pro/BAAI/bge-m3": 1024,  # paid model
+VOLCENGINE_MODEL_DIM_MAP = {
+    "doubao-embedding-text-240515": 2048,
 }
 
-SILICONFLOW_EMBEDDING_API = "https://api.siliconflow.cn/v1/embeddings"
+VOLCENGINE_EMBEDDING_API = "https://ark.cn-beijing.volces.com/api/v3/embeddings"
 
 
-class SiliconflowEmbedding(BaseEmbedding):
+class VolcengineEmbedding(BaseEmbedding):
     """
-    SiliconFlow embedding model implementation.
+    Volcengine embedding model implementation.
 
-    This class provides an interface to the SiliconFlow embedding API, which offers
+    This class provides an interface to the Volcengine embedding API, which offers
     various embedding models for text processing.
 
     For more information, see:
-    https://docs.siliconflow.cn/en/api-reference/embeddings/create-embeddings
+    https://www.volcengine.com/docs/82379/1302003
     """
 
-    def __init__(self, model="BAAI/bge-m3", batch_size=32, **kwargs):
+    def __init__(self, model="doubao-embedding-text-240515", batch_size=32, **kwargs):
         """
-        Initialize the SiliconFlow embedding model.
+        Initialize the Volcengine embedding model.
 
         Args:
             model (str): The model identifier to use for embeddings. Default is "BAAI/bge-m3".
             batch_size (int): Maximum number of texts to process in a single batch. Default is 32.
             **kwargs: Additional keyword arguments.
-                - api_key (str, optional): The SiliconFlow API key. If not provided,
-                  it will be read from the SILICONFLOW_API_KEY environment variable.
+                - api_key (str, optional): The Volcengine API key. If not provided,
+                  it will be read from the VOLCENGINE_API_KEY environment variable.
                 - model_name (str, optional): Alternative way to specify the model.
 
         Raises:
             RuntimeError: If no API key is provided or found in environment variables.
         """
-        if "model_name" in kwargs and (not model or model == "BAAI/bge-m3"):
+        if "model_name" in kwargs and (not model or model == "doubao-embedding-text-240515"):
             model = kwargs.pop("model_name")
         self.model = model
         if "api_key" in kwargs:
             api_key = kwargs.pop("api_key")
         else:
-            api_key = os.getenv("SILICONFLOW_API_KEY")
+            api_key = os.getenv("VOLCENGINE_API_KEY")
 
         if not api_key or len(api_key) == 0:
-            raise RuntimeError("api_key is required for SiliconflowEmbedding")
+            raise RuntimeError("api_key is required for VolcengineEmbedding")
         self.api_key = api_key
         self.batch_size = batch_size
 
@@ -115,9 +111,7 @@ class SiliconflowEmbedding(BaseEmbedding):
             "Content-Type": "application/json",
         }
         payload = {"model": self.model, "input": input, "encoding_format": "float"}
-        response = requests.request(
-            "POST", SILICONFLOW_EMBEDDING_API, json=payload, headers=headers
-        )
+        response = requests.request("POST", VOLCENGINE_EMBEDDING_API, json=payload, headers=headers)
         response.raise_for_status()
         result = response.json()["data"]
         sorted_results = sorted(result, key=lambda x: x["index"])
@@ -131,4 +125,4 @@ class SiliconflowEmbedding(BaseEmbedding):
         Returns:
             int: The number of dimensions in the embedding vectors.
         """
-        return SILICONFLOW_MODEL_DIM_MAP[self.model]
+        return VOLCENGINE_MODEL_DIM_MAP[self.model]
